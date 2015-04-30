@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 // Utilizamos el modelo User.
 use App\User;
 
+// Usamos Validator.
+use Validator;
+use Redirect;
+use Hash;
+
 class UsersController extends Controller {
 
 	/**
@@ -28,7 +33,7 @@ class UsersController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		return view('create');
 	}
 
 	/**
@@ -36,9 +41,39 @@ class UsersController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-		//
+		// Definimos reglas de validación.
+		$reglas=array(
+			'username'=>'required|unique:users',
+			'email' => 'required|email|unique:users',
+			'password' => 'required|min:6',
+			'password-repeat' => 'required|same:password'
+			);
+
+		// Procedemos a validar el formulario con Validator.
+		$validator=Validator::make($request->all(),$reglas);
+
+		// Comprobamos si hay fallos en la validación
+		if ($validator->fails())
+		{
+			return Redirect::to('users/create')
+			->withInput()
+			->withErrors($validator->messages());
+		}
+
+		// Si no hay fallos de validación
+		// Grabamos los datos en la tabla users.
+		User::create(array(
+			'username'=>$request->input('username'),
+			'email'=>$request->input('email'),
+			'password'=>Hash::make($request->input('password')),
+			'bio'=>$request->input('bio')
+			));
+
+		// redireccionamos a Users.
+		return Redirect::to('users');
+
 	}
 
 	/**

@@ -84,7 +84,16 @@ class UsersController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		// Mostramos la información del usuario
+		// Comprobamos si existe ese usuario
+		$usuario = User::find($id);
+
+		if ($usuario == null)
+		{
+			return Redirect::to('users');
+		}
+
+		return view('perfil')->withElusuario($usuario);
 	}
 
 	/**
@@ -95,7 +104,15 @@ class UsersController extends Controller {
 	 */
 	public function edit($id)
 	{
-		//
+		// Comprobamos si el id es correcto.
+		$usuario = User::find($id);
+
+		if ($usuario == null)
+		{
+				return Redirect::to('users');
+		}
+
+		return view('editar')->withId($id);
 	}
 
 	/**
@@ -104,9 +121,41 @@ class UsersController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update($id,Request $request)
 	{
-		//
+		// Reglas de validación.
+		$reglas = array(
+			'username'=>'unique:users',
+			'email'=>'email|unique:users',
+			'password'=>'min:6'
+			);
+
+		$validacion=Validator::make($request->all(),$reglas);
+
+		if ($validacion->fails())
+		{
+			return Redirect::to('users/'.$id.'/edit')
+				->withInput()
+				->withErrors($validacion->messages());
+		}
+
+		// Buscamos el usuario a editar.
+		$usuario = User::find($id);
+
+		if ($request->input('username')) // Si recibimos un username
+			$usuario->username=$request->input('username');
+		if ($request->input('email')) // Si recibimos un email
+			$usuario->email=$request->input('email');			
+		if ($request->input('bio')) // Si recibimos un bio
+			$usuario->bio=$request->input('bio');
+		if ($request->input('password')) // Si recibimos un password
+			$usuario->password=Hash::make($request->input('password'));
+
+		// Grabamos los datos actualizados del usuario
+		$usuario->save();
+
+		// Volvemos a la página personal del usuario
+		return Redirect::to('users/'.$id);
 	}
 
 	/**
@@ -117,7 +166,15 @@ class UsersController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		//
+		// Buscamos el usuario.
+		$usuario = User::find($id);
+		if ($usuario !=null)
+		{
+			$usuario->delete();
+		}
+
+		return Redirect::to('users');
+
 	}
 
 }

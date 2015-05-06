@@ -13,7 +13,12 @@
 
 Route::resource('users','UsersController');
 
+
+Route::controller('/','HomeController');
+
+/*
 Route::get('/',function()
 {
 	return "Bienvenido a la gestion de usuarios. Vaya a /users";
 });
+*/

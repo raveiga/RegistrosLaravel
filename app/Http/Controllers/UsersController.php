@@ -15,6 +15,14 @@ use Hash;
 
 class UsersController extends Controller {
 
+	public function __construct()
+	{
+		// Indicamos los métodos que van a utilizar un determinado middleware
+		$this->middleware('existe',['only'=>['show','edit','update','destroy']]);
+		$this->middleware('propietario',['only'=>['edit','update','destroy']]);
+	}
+
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -86,13 +94,16 @@ class UsersController extends Controller {
 	{
 		// Mostramos la información del usuario
 		// Comprobamos si existe ese usuario
+		/*
 		$usuario = User::find($id);
 
 		if ($usuario == null)
 		{
 			return Redirect::to('users');
 		}
+		*/
 
+		$usuario = User::find($id);
 		return view('perfil')->withElusuario($usuario);
 	}
 
@@ -106,12 +117,12 @@ class UsersController extends Controller {
 	{
 		// Comprobamos si el id es correcto.
 		$usuario = User::find($id);
-
+/*
 		if ($usuario == null)
 		{
 				return Redirect::to('users');
 		}
-
+*/
 		return view('editar')->withId($id);
 	}
 
@@ -168,11 +179,13 @@ class UsersController extends Controller {
 	{
 		// Buscamos el usuario.
 		$usuario = User::find($id);
-		if ($usuario !=null)
+		$usuario->delete();
+		
+/*		if ($usuario !=null)
 		{
 			$usuario->delete();
 		}
-
+*/
 		return Redirect::to('users');
 
 	}

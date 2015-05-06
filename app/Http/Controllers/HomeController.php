@@ -1,36 +1,56 @@
 <?php namespace App\Http\Controllers;
 
+use Redirect;
+use Auth;
+use Request;
+
 class HomeController extends Controller {
 
-	/*
-	|--------------------------------------------------------------------------
-	| Home Controller
-	|--------------------------------------------------------------------------
-	|
-	| This controller renders your application's "dashboard" for users that
-	| are authenticated. Of course, you are free to change or remove the
-	| controller as you wish. It is just here to get your app started!
-	|
-	*/
-
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
+	public function getIndex()
 	{
-		$this->middleware('auth');
+		//return view('home');
+		return Redirect::to('users');
 	}
 
-	/**
-	 * Show the application dashboard to the user.
-	 *
-	 * @return Response
-	 */
-	public function index()
+	public function getLogin()
 	{
-		return view('home');
+		// Nos vamos a autenticar con un usuario por defecto a modo de prueba
+		// $credenciales=array('username'=>'usuario','password'=>'abc123.');
+
+		// Para validar la autenticación tenemos dos formas:
+		// Auth::validate()  -> Nos valida pero no nos loguea en la aplicación.
+		// Auth::attempt() ->  Nos valida y loguea en la aplicación.
+		/*
+		if (Auth::attempt($credenciales,true))
+			return Redirect::to('users');
+
+		return "Acceso denegado.";
+		*/
+
+		return view('login');
+	}
+
+	public function postLogin()
+	{
+		$credenciales=array(
+			'username'=>Request::input('username'),
+			'password'=>Request::input('password')
+		);
+
+		if (Auth::attempt($credenciales))
+		{
+			return Redirect::to('users');
+		}
+		else
+			return Redirect::to('login')->withInput();
+	}
+
+
+	public function getLogout()
+	{
+		// Para desconectarnos...
+		Auth::logout();
+		return Redirect::to('users');
 	}
 
 }

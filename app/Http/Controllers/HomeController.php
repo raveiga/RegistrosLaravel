@@ -6,6 +6,11 @@ use Request;
 
 class HomeController extends Controller {
 
+	public function __construct()
+	{
+		$this->middleware('auth',array('only'=>'getMiembros'));
+	}
+
 	public function getIndex()
 	{
 		//return view('home');
@@ -51,6 +56,11 @@ class HomeController extends Controller {
 		// Para desconectarnos...
 		Auth::logout();
 		return Redirect::to('users');
+	}
+
+	public function getMiembros()
+	{
+		return "<h1>Noticias para usuarios registrados</h1><p>Se les comunica la cuenta bancaria para el pago de la cuota mensual: 1234 5678 979 8874.</p><p>Saludos.</p>La Dirección.";
 	}
 
 }

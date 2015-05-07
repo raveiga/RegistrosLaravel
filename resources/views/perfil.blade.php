@@ -8,5 +8,10 @@ Usuario: {{$elusuario->username}}
 	<h2>Usuario: {{$elusuario->username}}</h2>
 	<p>E-mail: {{$elusuario->email}}</p>
 	<p>Biografía: {{$elusuario->bio}}</p>
-	<a href='/users/{{$elusuario->id}}/edit'>Editar mi Perfil</a> | <a href='/users'>Volver</a>
+
+	@if ($propietario)
+		<a href='/users/{{$elusuario->id}}/edit'>Editar mi Perfil</a>
+	@endif
+
+	| <a href='/users'>Volver</a>
 @stop

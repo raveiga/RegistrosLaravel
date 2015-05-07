@@ -12,6 +12,7 @@ use App\User;
 use Validator;
 use Redirect;
 use Hash;
+use Auth;
 
 class UsersController extends Controller {
 
@@ -102,9 +103,13 @@ class UsersController extends Controller {
 			return Redirect::to('users');
 		}
 		*/
+		// True si es el propietario, false en otro caso.
+		$propietario = (Auth::id() === (int)($id));
 
 		$usuario = User::find($id);
-		return view('perfil')->withElusuario($usuario);
+		return view('perfil')
+		->withElusuario($usuario)
+		->withPropietario($propietario);
 	}
 
 	/**
@@ -116,8 +121,8 @@ class UsersController extends Controller {
 	public function edit($id)
 	{
 		// Comprobamos si el id es correcto.
-		$usuario = User::find($id);
-/*
+/*		$usuario = User::find($id);
+
 		if ($usuario == null)
 		{
 				return Redirect::to('users');
@@ -180,7 +185,7 @@ class UsersController extends Controller {
 		// Buscamos el usuario.
 		$usuario = User::find($id);
 		$usuario->delete();
-		
+
 /*		if ($usuario !=null)
 		{
 			$usuario->delete();
